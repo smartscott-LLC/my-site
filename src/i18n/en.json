@@ -253,20 +253,23 @@
         ]
       },
       "openSource": {
-        "badge": "Open Source",
-        "heading": "Built in the open",
-        "description": "Astro Rocket is free, open source, and MIT licensed. Browse the source, open issues, submit PRs, or just clone it and build something great.",
+        "badge": "Features Available",
+        "heading": "Additional Offerings",
+        "description": "smartscott.com can offer enhanced integrations and features to elevate your online presence.",
         "button": "View on GitHub",
         "cards": [
-          { "title": "Made by Hans Martens", "text": "Astro Rocket was designed and built by <a href=\"https://hansmartens.dev\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 decoration-brand-500 hover:text-brand-400 transition-colors\">Hans Martens</a> — a web designer and developer who uses it as the foundation for client projects." },
-          { "title": "MIT License", "text": "Free to use in personal and commercial projects. No attribution required, though a star on GitHub is always appreciated." },
-          { "title": "Actively maintained", "text": "The theme is kept up to date with new Astro releases and regularly improved based on community feedback." }
+          { "title": "AI-Integration", "description": "Integrate AI capabilities into your website to provide personalized experiences and automate tasks." },
+          { "title": "Server-side setup", "description": "We can set up your website on a server to ensure optimal performance and security." },
+          { "title": "Custom domain", "description": "We can help you obtain a custom domain for your website to make it more professional and memorable." },
+          { "title": "Analytics", "description": "We can set up analytics tools to track your website's performance and user behavior." },
+          { "title": "SEO optimization", "description": "We can optimize your website for search engines to improve its visibility and ranking." },
+          { "title": "E-commerce integration", "description": "We can integrate e-commerce functionality into your website to enable online sales and transactions." }
         ]
       },
       "cta": {
         "badge": "Get started",
         "heading": "Ready to build?",
-        "description": "Clone Astro Rocket, pick a theme, and launch your next project in minutes.",
+        "description": "A conversation about your goals, your audience, and what success looks like. No obligation.",
         "button": "Get Started"
       }
     },
@@ -374,16 +377,16 @@
     },
     "home": {
       "meta": {
-        "title": "Astro 7 starter theme",
-        "description": "A production-ready Astro 7 starter with 12 beautiful themes, 57+ components, built-in i18n, dark mode and a fast, modern foundation to build anything on."
+        "title": "smartscott.com",
+        "description": "Dedicated to building fast, modern websites with Astro, Svelte, and Tailwind. Custom engineered themes, 57+ components, dark mode and a fast, modern foundation to build anything on."
       },
       "hero": {
         "badge": "Available for new projects",
-        "titleLine1": "Astro Rocket —",
+        "titleLine1": "smartscott.com —",
         "titleLine2": "Web Designer",
         "titleLine3": "& Developer",
-        "description": "Astro 7 starter with 12 beautiful themes, 57+ components, dark mode and a fast, modern foundation to build anything on.",
-        "github": "Get it on GitHub",
+        "description": "Designing what matters to you.",
+        "github": "View us on Github",
         "getStarted": "Get started"
       },
       "services": {
@@ -416,12 +419,12 @@
         "badge": "About me",
         "headingLine1": "Designer, developer,",
         "headingLine2": "and blogger.",
-        "para1WithLocation": "Sixteen years of hands-on experience, based in {location} and available for clients worldwide. I build with Astro because it aligns with how I think about the web: lean, purposeful, and built to last.",
-        "para1NoLocation": "Sixteen years of hands-on experience and available for clients worldwide. I build with Astro because it aligns with how I think about the web: lean, purposeful, and built to last.",
+        "para1WithLocation": "Hands-on experience, based in {location} and available for clients worldwide. I build with Astro because it aligns with how I think about the web: lean, purposeful, and built to last.",
+        "para1NoLocation": "Hands-on experience and available for clients worldwide. I build with Astro because it aligns with how I think about the web: lean, purposeful, and built to last.",
         "para2": "On the blog, I share the ideas and decisions that shape my work.",
         "moreAboutMe": "More about me",
         "statsIntro": "A few things about me.",
-        "stat1": "16 Years Experience",
+        "stat1": "2 Years Experience",
         "stat2": "Building with Astro",
         "stat3": "Working worldwide",
         "basedIn": "Based in"
