@@ -188,8 +188,8 @@
       },
       "hero": {
         "badge": "About",
-        "titleLead": "Astro —",
-        "typingWords": ["Built For Production-Readiness", "Built For Speed", "Built For SEO", "Built For Developers"],
+        "titleLead": "smartscott.com Web Designs —",
+        "typingWords": ["Built For Production-Readiness", "Built For Speed", "Built For SEO", "Built to Compete"],
         "description": "Astro is a modern, open-source static site generator that empowers developers to build fast, modern websites"
       },
       "intro": {
@@ -221,7 +221,7 @@
       "stack": {
         "badge": "Tools & Tech",
         "title": "The Stack",
-        "description": "The technologies powering Astro Rocket — chosen for performance, great developer experience, and long-term reliability."
+        "description": "The technologies powering our architecture — chosen for performance, great developer experience, and long-term reliability."
       },
       "faq": {
         "badge": "Good to know",
@@ -230,24 +230,24 @@
         "cards": [
           {
             "icon": "rocket",
-            "title": "About Astro",
+            "title": "About smartscott.com",
             "items": [
-              { "question": "What is Astro?", "answer": "Astro is a modern web framework built for content-driven sites. It ships zero JavaScript by default — only sending what the page actually needs. The result is fast load times, excellent Core Web Vitals scores, and lean, maintainable code." },
-              { "question": "Why build with Astro?", "answer": "Astro is the right tool for content-heavy sites: minimal JavaScript, clean HTML, great SEO out of the box, and a developer experience that stays out of your way. It's lean, purposeful, and built to last." },
-              { "question": "What can I build with Astro Rocket?", "answer": "Portfolios, business sites, marketing pages, blogs, documentation sites — any content-driven project. Astro Rocket gives you the structure, components, and defaults to hit the ground running." },
-              { "question": "Is Astro Rocket listed on the official Astro themes directory?", "answer": "Yes. <a href=\"https://astro.build/themes/details/astro-rocket/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 decoration-brand-500 hover:text-brand-400 transition-colors\">Astro Rocket</a> is listed on the official Astro themes directory as a free, production-ready theme." },
-              { "question": "Will Astro Rocket keep up with new Astro releases?", "answer": "Yes. Astro Rocket is actively maintained and updated to track new Astro releases. Follow along on the blog or watch the GitHub repository for updates." }
+              { "question": "What is smartscott.com?", "answer": "We are a Kansas City based web and software development agency that prioritizes client success." },
+              { "question": "Why choose us for your project?", "answer": "We consider every element that goes into our tailored designs, focusing on exceeding industry standards and client expectations." },
+              { "question": "What can I build with smartscott.com?", "answer": "Portfolios, business sites, marketing pages, blogs, documentation sites — any content-driven project. smartscott.com gives you the structuredness and flexibility to build whatever you need." },
+              { "question": "Is smartscott.com LLC listed on the official state and federal registries?", "answer": "Yes. <a href=\"https://bsd.sos.mo.gov/BusinessEntity/BusinessEntityDetail.aspx?page=beSearch&ID=5021183\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 decoration-brand-500 hover:text-brand-400 transition-colors\">smartscott.com LLC</a> is listed on the official state and federal registries." },
+              { "question": "Will smartscott.com keep up with industry progressive standards?", "answer": "Yes. smartscott.com actively participates in the the development and research of modern software and hardware development" }
             ]
           },
           {
             "icon": "code-2",
-            "title": "Using the theme",
+            "title": "Details concerning cost and time.",
             "items": [
-              { "question": "Is it free to use?", "answer": "Yes, completely free. Astro Rocket is MIT licensed — use it for personal and commercial projects, no attribution required." },
-              { "question": "How do I switch themes?", "answer": "Change a single line in your config. Astro Rocket ships with 12 hand-crafted colour themes — swap between them instantly without touching a line of CSS." },
-              { "question": "Does it support TypeScript?", "answer": "Yes, TypeScript is used throughout. All components, configs, and utilities are fully typed." },
-              { "question": "How do I add my own language for i18n?", "answer": "Astro Rocket's i18n is config-driven. Add your locale to the i18n config file, create a matching translation file, and the routing and UI adapt automatically." },
-              { "question": "Where do I report bugs or suggest features?", "answer": "Open an issue or start a discussion on the <a href=\"https://github.com/hansmartensdev/astro-rocket\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"underline underline-offset-2 decoration-brand-500 hover:text-brand-400 transition-colors\">GitHub repository</a>. Contributions and feedback are always welcome." }
+              { "question": "How much will this cost me?", "answer": "We consider everyones position and desire before committing to a price, we understand that each project is unique and requires a customized approach." },
+              { "question": "Is there a timeline for completion?", "answer": "Depending on the size of the project the timeline can vary, but for majority we aim to completely have it launched within a 2-week time span." },
+              { "question": "Do I have to use Astro or Svelte?", "answer": "While it is our preferred platform, we can work with any framework or CMS that you prefer. We will work with you to determine the best solution for your project." },
+              { "question": "Is there a brick-and-morter establishment I can visit?", "answer": "We do have a home office located in downtown Kansas City and appointments can be made upon request. Just drop us a message if you prefer to meet in person." },
+              { "question": "Do I have to pay all up front?", "answer": "No, We usually work under the 50/50 plan (50% upfront, 50% upon completion) but we do also have an option to make payments over time. Contact us to determine what works best for you." }
             ]
           }
         ]
