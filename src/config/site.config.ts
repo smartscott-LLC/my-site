@@ -227,7 +227,7 @@ export interface SiteConfig {
     };
     /** Favicon path (lives in public/) */
     favicon: {
-      svg: string;
+      png: string;
     };
     /** Theme colors for manifest and browser UI */
     colors: {
@@ -245,7 +245,7 @@ const siteConfig: SiteConfig = {
     'Web Design and Software Development tailored to fit your desire and provide technical solutions for AI integrations and more.',
   url: SITE_URL || 'https://smartscott.com',
   ogImage: '/og-default.png',
-  author: 'Scott SLater',
+  author: 'Scott Slater',
   email: 'discover@smartscott.info',
   address: {
     street: '',

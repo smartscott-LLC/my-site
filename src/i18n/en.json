@@ -49,13 +49,13 @@
     "shareOn": "Share on {platform}",
     "copyLink": "Copy link",
     "metaTitle": "Blog",
-    "metaDescription": "Articles on web design, development, and the web by Astro Rocket.",
+    "metaDescription": "Articles on web design, development, Astro, Svelte, and building performant websites.",
     "heroBadge": "All posts",
-    "heroDescription": "Articles on Astro, web performance, design systems, and building with Astro Rocket.",
+    "heroDescription": "Notes on design, code, and the craft — Astro, Svelte, Tailwind, performance, and building things that last.",
     "allPosts": "All posts",
     "noPosts": "No posts found",
     "pageMetaTitle": "Blog — Page {page}",
-    "pageMetaDescription": "Page {page} of {total} — articles on Astro, web performance, design, and the web.",
+    "pageMetaDescription": "Page {page} of {total} — articles on Astro, Svelte, web performance, design, and the web.",
     "pageBadge": "Page {page} of {total}",
     "newestPosts": "Newest posts",
     "tagMetaTitle": "#{tag} — Blog",
@@ -85,12 +85,12 @@
     "viewSource": "View source",
     "noProjectsFound": "No projects found.",
     "metaTitle": "Projects",
-    "metaDescription": "Selected work — websites, tools, and open-source projects built by Astro Rocket.",
+    "metaDescription": "Selected work — websites, tools, and open-source projects built with Astro, Svelte, and Tailwind.",
     "heroBadge": "Selected work",
-    "heroDescription": "Work I'm most proud of.",
+    "heroDescription": "Projects I'm most proud of — custom builds, design systems, and performant web applications.",
     "allProjects": "All projects",
     "pageMetaTitle": "Projects — Page {page}",
-    "pageMetaDescription": "Page {page} of {total} — selected work, tools, and open-source projects by Astro Rocket.",
+    "pageMetaDescription": "Page {page} of {total} — selected work, tools, and open-source projects.",
     "pageBadge": "Page {page} of {total}",
     "tagMetaTitle": "#{tag} — Projects",
     "tagMetaDescription": "Projects tagged \"{tag}\".",
@@ -183,39 +183,39 @@
   "pages": {
     "about": {
       "meta": {
-        "title": "About — Astro 7 Starter Theme",
-        "description": "Astro Rocket is a production-ready Astro 7 starter theme with 12 themes, 57+ components, built-in i18n, dark mode, and everything you need to launch fast."
+        "title": "About — Tailored Web Design & Development",
+        "description": "Custom graphics and innovative designs fashioned to meet your needs with over 57 hand-crafted components crafted to fit every need"
       },
       "hero": {
         "badge": "About",
-        "titleLead": "Astro Rocket —",
-        "typingWords": ["Astro 7 Starter", "Production-Ready", "12 Themes", "57+ Components", "Dark Mode", "Built-in i18n", "Zero Config SEO"],
-        "description": "A free, production-ready Astro 7 starter theme with everything you need to build fast, modern websites — without starting from scratch."
+        "titleLead": "Astro —",
+        "typingWords": ["Built For Production-Readiness", "Built For Speed", "Built For SEO", "Built For Developers"],
+        "description": "Astro is a modern, open-source static site generator that empowers developers to build fast, modern websites"
       },
       "intro": {
-        "badge": "Free & Open Source",
+        "badge": "Svelte + Astro",
         "heading": "A solid foundation for any project",
         "paragraphs": [
-          "Astro Rocket is a production-ready starter theme built on Astro 7. It ships with a full component library, 12 hand-crafted themes, dark mode, built-in i18n, and a blog — so you can focus on building your project, not the boilerplate.",
-          "It's free, MIT licensed, and listed on the official Astro themes directory. Clone it, customise it, and ship something you're proud of."
+          "Speed and search visibility aren't features to add at the end — they're constraints to honour from the first commit. Every second a page loads costs attention, ranking, and trust.",
+          "Why Developers Use Svelte / *Zero Runtime Overhead: By doing the heavy lifting at build time, Svelte doesn't need to ship an execution library to the browser, leading to smaller bundle sizes and blazing-fast performance. / *Write Less Code: Svelte’s syntax is remarkably concise. Components bundle logic, styling, and markup in a single .svelte file, which helps developers build features faster with fewer lines of code. / *Reactivity: Svelte includes built-in reactive primitives that automatically re-render parts of the UI whenever underlying data or state variables change."
         ],
         "facts": [
           { "icon": "rocket", "title": "Astro 7", "description": "Built on the latest Astro release." },
-          { "icon": "layout", "title": "12 themes", "description": "Switch themes with one line." },
-          { "icon": "code-2", "title": "57+ components", "description": "Composable, production-ready." },
-          { "icon": "sparkles", "title": "Dark mode", "description": "Built in, no extra setup needed." },
-          { "icon": "award", "title": "Built-in i18n", "description": "Multi-language support out of the box." },
+          { "icon": "layout", "title": "Custom themes", "description": "Themes purpose built for your business." },
+          { "icon": "code-2", "title": "57+ components pre-built", "description": "Production-ready to lessen the time to launch." },
+          { "icon": "sparkles", "title": "Light/Dark mode", "description": "Built in to every design." },
+          { "icon": "award", "title": "Built-in i18n", "description": "Multi-language support." },
           { "icon": "zap", "title": "Zero config SEO", "description": "Structured data & meta tags included." }
         ]
       },
       "principles": {
         "badge": "Design Principles",
         "heading": "Built with intention",
-        "lead": "Every decision in Astro Rocket — from component structure to default config — is driven by the same three principles.",
+        "lead": "Every decision — from component structure to default config — is driven by the same three principles.",
         "items": [
           { "icon": "zap", "title": "Performance First", "description": "Zero JavaScript by default. Every component is optimised for speed, Core Web Vitals, and lean output." },
-          { "icon": "award", "title": "Developer Experience", "description": "TypeScript throughout, sensible defaults, and a component library you can drop straight into any page." },
-          { "icon": "rocket", "title": "Modern from the Ground Up", "description": "Astro 7, Tailwind CSS 4, and a clean architecture that's easy to extend and maintain." }
+          { "icon": "award", "title": "Client Experience", "description": "Easy to maintain, easy to extend, and easy to use." },
+          { "icon": "rocket", "title": "Modern from the Ground Up", "description": "Astro 7, Tailwind CSS 4, Svelte and a clean architecture that competes at every level." }
         ]
       },
       "stack": {
