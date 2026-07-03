@@ -80,23 +80,14 @@ const cta = tData<{ badge: string; heading: string; description: string; button:
       <Icon name="rocket" size="sm" />
       {hero.badge}
     </Badge>
-    <div class="flex items-center gap-4 mb-4">
-      <img 
-        src="./assets/blog/me.png" 
-        alt="Smartscott.com team member" 
-        class="w-64 h-64 rounded-full border-4 border-brand-500 object-cover"
-      />
-      <div>
-        <h1 slot="title" class="text-2xl font-bold">
-          <span class="text-foreground [-webkit-text-fill-color:currentColor]">{hero.titleLead}</span><br />
-          <span class="text-brand-500 [-webkit-text-fill-color:var(--color-brand-500)]">
-            <TypingEffect words={hero.typingWords} />
-          </span>
-        </h1>
-      </div>
-    </div>
+    <h1 slot="title" class="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-center mb-6">
+      <span class="text-foreground [-webkit-text-fill-color:currentColor]">{hero.titleLead}</span><br />
+      <span class="text-brand-500 [-webkit-text-fill-color:var(--color-brand-500)]">
+        <TypingEffect words={hero.typingWords} />
+      </span>
+    </h1>
 
-    <p slot="description">
+    <p slot="description" class="text-xl text-foreground-muted leading-relaxed max-w-3xl mx-auto">
       {hero.description}
     </p>
   </Hero>
