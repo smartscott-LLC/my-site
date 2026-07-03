@@ -1,0 +1,525 @@
+PROVISIONAL PATENT APPLICATION
+Title: SPECTRE N0L: Asynchronous Frequency-Activated Self-Timed Inter-Module
+Communication Engine Where Frequency-Encoded Pulses Serve Simultaneously as Data
+Carriers and Handshake Signals, Eliminating the Global Clock Tree
+
+COVER SHEET
+Application Type: Provisional Patent Application (35 U.S.C. § 111(b))
+Title of Invention: Frequency-Activated Asynchronous Self-Timed Processing Architecture in
+Which a Shared Frequency Vocabulary Serves as Both Data Encoding Alphabet and
+Inter-Module Handshake Protocol, With Delay-Insensitive Cross-Platform Synchronization and
+Zero-Idle-Power Operation
+Inventor: Scott Slater
+700 E. 8th St.
+Unit 14E
+Kansas City, MO 64106-5400
+United States Citizen
+Filing Date: May 4, 2026 (or date of actual filing)
+Docket / Reference: SES-004-SPECTRE-N0L
+Parent Application Reference: This application is a provisional extension of
+SES-003-SPECTRE, filed May 4, 2026. It extends the frequency-domain encoding paradigm of
+SPECTRE to the inter-module handshake and system timing layer, and claims priority to the
+parent project SPECTRE priority date of April 25, 2026.
+Correspondence Address:
+700 E. 8th St.
+Unit 14E
+Kansas City, MO 64106-5400
+
+FIELD OF THE INVENTION
+This invention relates to asynchronous digital logic, self-timed inter-module communication, and
+frequency-domain data processing systems implemented in reconfigurable hardware (FPGA)
+and associated digital logic. More particularly, this invention relates to an architecture in which
+frequency-encoded pulses — derived from the MIDI-mapped frequency vocabulary established
+in the parent SPECTRE system — serve simultaneously as data carriers and as inter-module
+handshake signals, collapsing the data path and the control path into a single physical signal
+and eliminating the global clock tree from the inter-module communication layer.
+
+BACKGROUND
+1.1 The Global Clock Constraint
+Every conventional synchronous digital system — including all current commercial FPGA
+designs — operates under a global clock tree. The clock tree distributes a periodic timing signal
+to every flip-flop in the design. All state transitions occur on clock edges. All combinational logic
+must settle within one clock period (the critical path). The clock period is set by the slowest path
+in the design.
+This architecture imposes three fundamental costs:
+Dead time: Logic that completes its computation in 0.3 ns of a 1.67 ns clock period (600 MHz)
+sits idle for the remaining 1.37 ns, waiting for the next clock edge. This dead time can represent
+30–80% of total potential throughput depending on the distribution of path delays across the
+design.
+Clock power: The clock tree toggles continuously — every register, every clock buffer, every
+clock spine — at full frequency, even when no data is moving. Dynamic power consumption is
+dominated by clock tree switching in large synchronous designs, often representing 30–50% of
+total chip power.
+Clock skew as scaling limit: As the number of connected processing nodes grows,
+maintaining sub-nanosecond clock skew across all nodes becomes exponentially more difficult.
+At board-to-board and system-to-system scales, a shared global clock is physically impossible
+without specialized clock distribution hardware (e.g., White Rabbit PTP). Even with such
+hardware, the shared clock remains a single point of failure and a fundamental scaling ceiling.
+
+1.2 Asynchronous and Self-Timed Logic
+Asynchronous digital logic — logic that operates without a global clock — has been studied
+since the 1950s. Key paradigms include:
+-​
+-​
+
+-​
+
+-​
+
+Muller handshake circuits: REQ/ACK two-phase or four-phase handshake protocols
+between adjacent logic stages.
+Null Convention Logic (NCL): Data is encoded in three states — NULL (no data),
+DATA0 (logic zero), DATA1 (logic one). Threshold gates (THmn) fire only when a
+complete set of input states has arrived. The NULL state between data words separates
+successive computations and prevents wave collisions.
+Wave pipelining: Multiple data waves traverse the same combinational logic
+simultaneously. Registers between pipeline stages are eliminated. Throughput
+improvement of up to 5.7× over synchronous pipelines has been demonstrated in
+equalized-path implementations.
+Delay-insensitive (DI) circuits: Circuits whose correct operation is guaranteed
+regardless of the propagation delays of individual gates and wires, as long as delays are
+finite and positive. DI circuits automatically adapt to silicon variation, temperature, and
+supply voltage.
+
+Despite decades of research, asynchronous logic has seen limited commercial FPGA adoption
+because: (a) standard EDA tools (Vivado, Quartus) are designed for synchronous analysis; (b)
+the REQ/ACK handshake signals require additional wires separate from the data path; and (c)
+asynchronous designs are difficult to verify with standard simulation flows.
+
+1.3 The SPECTRE Frequency Vocabulary
+The parent invention SPECTRE (SES-003) established a 128-entry bijective frequency
+vocabulary: the MIDI equal-temperament pitch standard maps each 7-bit data symbol to a
+unique acoustic frequency between 8.18 Hz and 12,543.85 Hz. This vocabulary has been
+validated as a lossless data encoding alphabet across nine FPGA device families.
+A critical empirical observation from SPECTRE validation: cross-board timing variance is less
+than 3 nanoseconds across nine device families spanning 28nm through 7nm-equivalent
+process nodes. This is a remarkable result for a system in which the transmitting and receiving
+boards run entirely independent clocks with no shared synchronization signal. The mechanism
+is that SPECTRE's Goertzel-based decoder is inherently delay-insensitive: it detects which
+frequency is present in a 480-sample window, not when (relative to any absolute time reference)
+that frequency arrives. The frequency measurement is invariant to clock drift, temperature
+variation, and silicon speed grade.
+This observation establishes that SPECTRE's frequency vocabulary already implements
+delay-insensitive inter-board communication as an emergent property of its encoding paradigm
+
+— without having been designed to do so explicitly. SPECTRE N0L makes this emergent
+property explicit, intentional, and architecturally foundational.
+
+1.4 The Uncaptured Opportunity
+No prior art is known that:
+1.​ Collapses the data encoding signal and the inter-module handshake signal into a single
+physical frequency-encoded pulse.
+2.​ Applies the MIDI-mapped acoustic frequency vocabulary as a system-wide inter-module
+communication protocol (not merely a data encoding alphabet).
+3.​ Achieves delay-insensitive inter-board synchronization as a natural consequence of
+frequency-domain encoding rather than as an engineered clock distribution solution.
+4.​ Enables unlimited board-count scaling by replacing clock-based synchronization with
+frequency-arrival-based wake-up.
+5.​ Achieves zero-idle-power operation in reconfigurable hardware by making module
+switching activity exactly proportional to incoming frequency wave rate.
+
+SUMMARY OF THE INVENTION
+SPECTRE N0L (No-clock / No Limits) is an asynchronous, self-timed, frequency-activated
+inter-module communication architecture that extends the SPECTRE frequency vocabulary from
+a data encoding layer to a universal system protocol layer. In SPECTRE N0L, every module in
+the processing pipeline — and every board in a multi-board system — communicates
+exclusively through SPECTRE frequency pulses. There is no global clock. There is no shared
+synchronization signal. There is only: frequency arrives → module activates → processes →
+emits next frequency → returns to dark state.
+The central innovation is the collapse of data and control into a single physical signal. In
+conventional asynchronous logic (e.g., NCL, Muller handshake circuits), data wires and
+REQ/ACK handshake wires are separate. A data word is accompanied by a separate REQ
+signal asserting "data is present," and a separate ACK signal returning "data has been
+consumed." In SPECTRE N0L, the REQ signal is the data: the arrival of a frequency pulse at a
+module's input simultaneously carries the 7-bit data payload AND asserts the request for the
+receiving module to begin processing. The receiving module's completion of Goertzel frequency
+detection simultaneously recovers the data payload AND generates the acknowledgment that
+the transmission is complete.
+The NULL state in SPECTRE N0L corresponds directly to the NULL state in Null Convention
+Logic: the absence of any SPECTRE frequency pulse. A module in the NULL state is
+consuming only static leakage power — no dynamic switching, no clock toggling, no idle
+
+current. A module transitions from NULL to active in the same instant the first sample of an
+incoming frequency pulse enters its Goertzel accumulator. This is the physical implementation of
+zero-idle-power operation.
+The wave pipeline emerges naturally: because each module activates independently on
+frequency arrival and completes independently on Goertzel detection, multiple frequency waves
+can be in transit through the pipeline simultaneously — one being detected by Module N while
+Module N-1 is already emitting the next frequency and Module N+1 is already staging its
+Goertzel accumulator. The pipeline stages are separated not by registers clocked on a shared
+edge, but by the physical propagation delay of the frequency pulse through the transmission
+medium.
+Infinite board scaling follows directly: adding a board to the system requires only connecting it
+to the frequency transmission medium. No clock distribution infrastructure is required. No PLL
+lock sequence. No clock skew budget reallocation. The new board wakes up when a frequency
+pulse arrives, processes it, and emits the next frequency. The system scales by the laws of
+physics, not by the constraints of clock tree engineering.
+
+BRIEF DESCRIPTION OF DRAWINGS
+(Informal drawings — formal drawings to accompany non-provisional application)
+Figure 1 — SPECTRE vs. SPECTRE N0L Protocol Layer Comparison Side-by-side: Left
+shows SPECTRE (SES-003) with synchronous RTL inside each board and frequency encoding
+at the board-to-board interface only. Right shows SPECTRE N0L with frequency-activated
+handshake at every inter-module interface, including intra-board. Clock tree is shown present in
+SPECTRE, absent in N0L. Frequency wave arrows replace clock distribution spines.
+Figure 2 — Data+Control Collapse Diagram Conventional asynchronous: three wires per
+interface (DATA, REQ, ACK). NCL: DATA bus + separate REQ/ACK handshake rails. SPECTRE
+N0L: single differential pair carries frequency-encoded pulse that simultaneously IS the data, IS
+the REQ, and whose Goertzel detection completion IS the ACK. Wire count reduction: 3-wire
+interface to 1-wire (differential pair) interface.
+Figure 3 — NULL State Power Consumption Model Two curves: (a) synchronous clocked
+module — constant dynamic power P = α·C·V²·f regardless of data rate; (b) SPECTRE N0L
+module — dynamic power P = 0 when no frequency present, P ∝ f_wave when frequency wave
+active. Crossover point shown: N0L is more power-efficient than synchronous at any data rate
+below clock frequency.
+
+Figure 4 — Wave Pipeline in SPECTRE N0L Four modules (M1–M4) in pipeline. Three
+frequency waves (W1, W2, W3) shown simultaneously in transit: W1 being detected by M2
+Goertzel while W2 is in the transmission medium between M1 and M2 while W3 is being emitted
+by M1. No registers between stages. Wave separation maintained by physical propagation
+delay.
+Figure 5 — Infinite Board Scaling Architecture Linear chain: Board 1 → Board 2 → ... →
+Board N. Each board connected by LVDS differential pair carrying SPECTRE frequency pulses.
+No clock distribution. Board N receives frequency, Board N-1 receives frequency
+simultaneously. Each board independently Goertzel-detects its incoming frequency and emits
+the next. Adding Board N+1 requires only connecting one LVDS pair.
+Figure 6 — Goertzel Completion as ACK Timing Diagram Waveform: frequency_pulse_in
+(differential signal), goertzel_accumulator (ramps over 480 samples), max_power_bin (asserts
+at end of window = data recovered), ack_implicit (conceptual signal: max_power_bin assertion
+IS the ACK, no separate wire). Compare to NCL: explicit ACK wire shown for contrast.
+Figure 7 — SPECTRE N0L Module FSM States: ST_NULL (dark, zero dynamic power) →
+ST_ACCUMULATE (Goertzel running, 480 samples) → ST_DETECT (max bin selected, data
+recovered) → ST_EMIT (next frequency pulse transmitted) → ST_NULL. No clock edge triggers
+any transition — transitions are triggered by: frequency_present (NULL→ACCUMULATE),
+accumulator_full (ACCUMULATE→DETECT), detection_complete (DETECT→EMIT),
+emission_complete (EMIT→NULL).
+Figure 8 — SES System Fully Realized in N0L Complete pipeline: Shimmers oscillator
+(frequency source) → Eidolon Dragoncache (all inter-tier interfaces replaced with SPECTRE
+N0L frequency handshakes) → SPECTRE N0L multi-board pipeline → Storage / Analysis.
+Every arrow in the diagram is a SPECTRE frequency pulse. Every module wakes on frequency
+arrival. One language. No clocks.
+
+DETAILED DESCRIPTION OF THE PREFERRED
+EMBODIMENT
+4.1 The Foundational Principle: One Signal, Three Roles
+In SPECTRE N0L, a single frequency-encoded pulse simultaneously performs three roles that
+are implemented as three separate signals in all prior art:
+Role 1 — Data carrier: The frequency of the pulse identifies the 7-bit data payload via the
+MIDI-mapped bijective LUT established in SPECTRE (SES-003). A pulse at 440 Hz (MIDI note
+
+69) carries the 7-bit symbol 0x45. A pulse at 261.63 Hz (MIDI note 60, middle C) carries 0x3C.
+The complete 128-entry mapping is inherited from SPECTRE with no modification.
+Role 2 — Request (REQ) signal: The presence of any SPECTRE frequency pulse at a
+module's input — detectable within the first few samples of the Goertzel accumulator as rising
+spectral power — implicitly asserts REQ to the receiving module. The module transitions from
+ST_NULL to ST_ACCUMULATE without any separate wire being asserted and without waiting
+for a clock edge.
+Role 3 — Implicit acknowledgment generation: The receiving module's completion of
+Goertzel detection (ST_DETECT) is the implicit ACK. The transmitting module considers its
+transmission acknowledged when the next frequency pulse arrives from downstream — either
+directly as a separate feedback frequency or inferred from the pipeline's equalized-path timing.
+In a unidirectional pipeline (the preferred embodiment), the ACK is implicit in the pipeline flow
+and no explicit acknowledgment wire is required.
+This collapse from three signals to one is the primary engineering innovation of SPECTRE N0L.
+It reduces inter-module interface complexity to a single differential pair (LVDS or equivalent) per
+directed connection.
+
+4.2 Novel Contribution 1 — Frequency Pulse as Simultaneous Data and
+Handshake
+Prior art interface (NCL/Muller):
+Module A → Module B:
+DATA[6:0] : 7 wires (data payload)
+REQ
+
+: 1 wire (data valid assertion)
+
+ACK (B→A) : 1 wire (consumption acknowledgment)
+Total: 9 wires minimum per interface
+SPECTRE N0L interface:
+Module A → Module B:
+FREQ_P
+
+: 1 wire (differential positive — frequency-encoded pulse)
+
+FREQ_N
+
+: 1 wire (differential negative)
+
+Total: 2 wires per interface
+The 7-bit data payload is recovered by Goertzel detection of the FREQ_P/FREQ_N signal. The
+REQ is implicit in the pulse's presence. The ACK is implicit in the pipeline's flow. Interface
+complexity drops from 9 wires to 2 wires per directed connection — an 77.8% reduction in
+inter-module wiring.
+At system scale — N modules with M inter-module connections — the wiring reduction is M × 7
+wires. For the 13-module Dragoncache implementation (Eidolon, SES-002), this represents a
+reduction from approximately 117 inter-module data+handshake wires to 26 differential pair
+wires.
+
+4.3 Novel Contribution 2 — Delay-Insensitive Cross-Platform
+Synchronization as Designed Property
+The SPECTRE parent system (SES-003) demonstrated empirically that cross-board timing
+variance is less than 3 nanoseconds across nine FPGA device families with no shared clock.
+SPECTRE N0L makes this property architectural and intentional rather than emergent.
+The mechanism: Goertzel frequency detection is mathematically a measurement of spectral
+power at a target frequency over N samples. The measurement result — the detected MIDI note
+— is independent of: the absolute time at which the frequency pulse arrived, the phase offset of
+the receiving module's sampling clock relative to the transmitting module's clock, the
+temperature and supply voltage of the receiving silicon (which affect gate delays and therefore
+sampling clock accuracy), and the speed grade of the device family.
+The only requirement for correct detection is that N = 480 samples are accumulated at 96,000
+samples per second. The sample clock frequency must be stable over the 5 ms window
+duration — a requirement met by any FPGA PLL with standard jitter specifications.
+This property is delay-insensitive by the formal DI definition: the system's logical correctness is
+guaranteed for any finite positive propagation delay. Adding a board to the pipeline introduces
+additional propagation delay but does not change the correctness of any module's Goertzel
+detection. The system adapts automatically.
+
+4.4 Novel Contribution 3 — Zero-Idle-Power Operation
+In a synchronous clocked system, dynamic power consumption is:
+P_dynamic = α × C × V² × f_clock
+where α is the switching activity factor (fraction of flip-flops and logic gates that switch per clock
+cycle). Even when no data is being processed, α > 0 because the clock tree itself toggles every
+
+flip-flop's clock input at every clock edge. In large designs, the clock tree alone can represent α
+≈ 0.3–0.5 of total switching activity.
+In a SPECTRE N0L module, there is no clock tree. When no frequency pulse is present
+(ST_NULL state), the only power consumed is static leakage through transistor gate oxides.
+Dynamic switching activity is zero. Dynamic power is zero. The module is "dark."
+When a frequency pulse arrives, the Goertzel accumulator begins switching. Dynamic power
+scales linearly with the incoming pulse frequency:
+P_dynamic_N0L = α_goertzel × C × V² × f_pulse_rate
+where f_pulse_rate is the rate of incoming frequency pulses (at most 96,000 per second for a
+480-sample window at 96 kHz) and α_goertzel is the switching activity of the Goertzel
+accumulator only.
+The zero-idle-power property enables a new class of system architecture: a pipeline of N boards
+can remain fully dark until a single triggering frequency pulse is injected at Board 1. The pulse
+propagates through the pipeline, activating each board only during its active processing window,
+then returning each board to the dark state. Total energy consumed per data unit is bounded
+and proportional to data volume — not to wall-clock time.
+
+4.5 Novel Contribution 4 — Wave Pipeline Without Registers
+In a standard synchronous pipeline, N pipeline stages require N-1 register stages (flip-flop
+banks) to hold data at stage boundaries while downstream stages complete their work. Each
+register stage consumes FPGA flip-flop resources and introduces one clock cycle of latency.
+In SPECTRE N0L, register stages between pipeline modules are eliminated. Multiple frequency
+waves can be in transit through the pipeline simultaneously, separated by the physical
+propagation delay of the transmission medium (approximately 5 ns per meter for electrical
+signals in PCB trace or coaxial cable; approximately 3.3 ns per meter in fiber optic).
+The equalized-path condition: For wave pipelining to be correct, the minimum and maximum
+propagation delays through each pipeline stage must be equalized — that is, the difference
+between the fastest and slowest path through any stage must be less than one wave spacing. In
+SPECTRE N0L, each module's processing time is deterministic and equal: 480 Goertzel
+accumulation cycles + detection + emission = a fixed number of clock cycles at the local
+sampling clock. This determinism is an inherent property of the Goertzel algorithm applied to a
+fixed-length window. The equalized-path condition is satisfied by design.
+Research in conventional wave pipelining demonstrates throughput improvements of up to 5.7×
+over synchronous pipelines with equivalent logic depth. SPECTRE N0L achieves this
+
+improvement without any of the specialized EDA tooling required for conventional wave pipeline
+design, because the pipeline stages are separated by physical transmission medium (wire/fiber)
+rather than by on-chip combinational logic paths.
+
+4.6 Novel Contribution 5 — Universal Frequency Protocol: Every Module
+Speaks SPECTRE
+In the parent SPECTRE system (SES-003), the frequency vocabulary is used at one layer: the
+data encoding interface between the encoder and the WAV storage / Goertzel decoder. Modules
+internal to the FPGA communicate via standard synchronous RTL signals (std_logic_vector,
+valid/ready handshake, AXI4-Lite, etc.).
+In SPECTRE N0L, the MIDI-mapped 128-frequency vocabulary is the universal protocol for ALL
+inter-module communication. Every module in the system — regardless of its function (oscillator,
+hub, extent_tree, stack_reader, CRC engine, PCIe interface) — has a SPECTRE N0L interface:
+it receives frequency pulses as input and emits frequency pulses as output. The module's
+function determines which frequency it emits in response to which incoming frequency, but the
+physical interface is identical for every module.
+The architectural consequence: Every module and every board in the system is natively
+interoperable. A board does not need to know whether it is communicating with an oscillator
+module or a CRC engine module. It receives a frequency, processes it, emits the next
+frequency. The system can be reconfigured by changing the mapping between incoming and
+outgoing frequencies at each module — a software operation on the frequency-routing table —
+without any hardware change.
+The "fleet" scaling property: A fleet of N boards connected by LVDS differential pairs all
+running SPECTRE N0L are natively interoperable from the moment they are powered. Board N
+does not need to be configured to communicate with Board M — both already speak SPECTRE.
+Adding a board is equivalent to adding a native speaker to a conversation: no translation layer
+required.
+
+4.7 Novel Contribution 6 — The NULL State as Architecture
+In Null Convention Logic (NCL), the NULL state is a data encoding level that separates
+successive data words in a bundled data channel. It is a protocol artifact — a separator that
+must be explicitly generated and detected.
+In SPECTRE N0L, the NULL state is the physical absence of any frequency pulse on the
+transmission medium. It requires no explicit generation (a module simply stops transmitting), no
+explicit detection (a module simply observes that no Goertzel bin has sufficient power), and no
+additional protocol overhead. The NULL state is free: it costs nothing to generate, nothing to
+detect, and nothing to transmit.
+
+This property — NULL as the absence of signal rather than as an explicit signal level — is
+unique to frequency-domain encoding. In binary encoding, silence (no signal) is ambiguous: it
+could mean NULL, or it could mean a transmission error, or it could mean the line is idle. In
+SPECTRE N0L, silence has unambiguous meaning: no data is present. A module in a
+silent-input state remains in ST_NULL. There is no ambiguity.
+The NULL state in SPECTRE N0L therefore simultaneously implements: wave separation
+(prevents wave collisions in the wave pipeline), idle detection (distinguishes no-data from data),
+and power gating (the module's switching activity drops to zero in the NULL state automatically,
+without any power management logic).
+
+4.8 Novel Contribution 7 — Raw LVDS Pin Interface: Bypassing
+Transceiver Clock Recovery
+Standard FPGA high-speed transceivers (e.g., AMD GTY, GTM) incorporate Phase-Locked
+Loops (PLLs) and Clock Data Recovery (CDR) circuits that re-synchronize received serial data
+into the local clock domain. This is the correct behavior for protocols that require synchronous
+processing (PCIe, Ethernet, JESD204B). For SPECTRE N0L, it is exactly the wrong behavior:
+CDR would force the received frequency pulse back into a clocked domain, destroying the
+asynchronous self-timed property.
+SPECTRE N0L bypasses high-speed transceivers and uses raw LVDS differential I/O pins with
+IBUFDS (input differential buffer) at the receiver and OBUFDS (output differential buffer) at the
+transmitter. The received differential signal feeds directly into the Goertzel accumulator's sample
+input. No CDR, no PLL lock sequence, no 8b/10b framing overhead.
+LVDS on UltraScale+ HR I/O banks supports signaling rates up to approximately 1.6 Gbps in
+raw mode. For SPECTRE N0L's 96 kHz sample rate (well below this limit), LVDS provides
+ample bandwidth with sub-nanosecond signal integrity on PCB traces and with standard
+SFP/optical transceivers for inter-board connections.
+The Xilinx IDELAY/ODELAY primitives (IDELAYE3/ODELAYE3 on UltraScale+) provide per-pin
+delay adjustment with 2 ps resolution over a 1.25 ns range. These primitives enable per-board
+wave pipeline deskewing: if Board M's Goertzel window completes slightly early or late relative
+to Board M+1's accumulation start, ODELAY at Board M's output and IDELAY at Board M+1's
+input can be tuned to compensate. This is the hardware equivalent of equalizing the wave
+pipeline paths across a multi-board system.
+
+4.9 Integration as the Culminating Architecture of the SES System
+SPECTRE N0L is the culminating expression of the Shimmers · Eidolon · SPECTRE system.
+When all three components are realized in N0L:
+
+Shimmers (SES-001) in N0L context: The oscillator engine generates the first frequency in the
+pipeline — the source wave. The DDS synthesizer emits a MIDI-frequency pulse whose
+frequency encodes the first data symbol. This pulse is the genesis of the entire pipeline. No
+clock starts the system — the first frequency pulse, self-generated by the oscillator, starts
+everything.
+Eidolon (SES-002) in N0L context: Every inter-tier interface in the Dragoncache —
+Inception→Hub, Hub→stack_reader, stack_reader→extent_tree, Conductor FSM state
+transitions — is replaced with SPECTRE frequency handshakes. The Conductor FSM's state
+transitions are triggered by frequency arrival, not by clock edges. Chamber A/B alternation is
+triggered by a specific designated "chamber switch" MIDI note. CRC64 seal assertion is carried
+as a specific "seal valid" frequency. The entire IPC backbone speaks SPECTRE.
+SPECTRE (SES-003) in N0L context: The wav_encoder and Goertzel decoder are the output
+and recovery interfaces — unchanged from SES-003. SPECTRE N0L feeds the wav_encoder a
+pre-processed, pipeline-validated frequency stream that has already passed through the
+Eidolon integrity gate.
+The emergent system property of full N0L integration: In the fully realized SES N0L system,
+there is no global clock, no shared synchronization signal, and no inter-module wiring beyond
+LVDS differential pairs. The system boots when the first frequency pulse is emitted. It processes
+data at the rate frequency pulses arrive. It consumes zero power when no frequency pulses are
+present. It scales to any number of boards by connecting additional LVDS pairs. The language
+of every signal in the system, at every layer, is SPECTRE.
+This is not the end of the beginning. It is the beginning of what comes next.
+
+CLAIMS
+(Informal claims for provisional filing — formal claims to be developed with patent attorney for
+non-provisional application)
+Claim 1. An asynchronous self-timed inter-module communication system comprising: a
+transmitting module that encodes a data symbol as a frequency-encoded pulse by selecting a
+pulse frequency from a predefined bijective frequency vocabulary based on the data symbol
+value; a transmission medium that carries the frequency-encoded pulse from the transmitting
+module to a receiving module; and a receiving module that recovers the data symbol from the
+received pulse by spectral frequency detection, wherein the presence of the frequency-encoded
+pulse simultaneously constitutes the data payload, the request signal to the receiving module to
+
+begin processing, and the trigger event that transitions the receiving module from an idle state
+to an active processing state, without requiring a separate request wire or a shared global clock.
+Claim 2. The system of Claim 1, wherein the receiving module's completion of spectral
+frequency detection constitutes an implicit acknowledgment that the data symbol has been
+received, without requiring a separate acknowledgment wire.
+Claim 3. The system of Claim 1, wherein the bijective frequency vocabulary consists of the 128
+pitches of the MIDI equal-temperament standard, mapping each 7-bit data symbol to a unique
+frequency between 8.176 Hz and 12,543.85 Hz.
+Claim 4. The system of Claim 1, wherein spectral frequency detection is performed by the
+Goertzel algorithm operating on a fixed-length sample window, and wherein the detection result
+is delay-insensitive: correct for any finite positive propagation delay between the transmitting
+module and the receiving module, without requiring clock synchronization between the two
+modules.
+Claim 5. The system of Claim 1, wherein the receiving module consumes zero dynamic power
+when no frequency-encoded pulse is present on the transmission medium, and wherein
+dynamic power consumption is proportional to the rate of incoming frequency-encoded pulses.
+Claim 6. The system of Claim 1, wherein a plurality of transmitting and receiving modules are
+interconnected in a pipeline, wherein multiple frequency-encoded pulses from successive data
+symbols are simultaneously in transit through the pipeline, separated by the physical
+propagation delay of the transmission medium, constituting a wave pipeline without register
+stages between pipeline modules.
+Claim 7. A multi-board processing system comprising a plurality of processing boards, each
+board implementing the receiving module of Claim 1, wherein the boards are interconnected by
+differential pair transmission media carrying frequency-encoded pulses, and wherein no shared
+global clock signal is distributed between boards, and wherein additional boards are added to
+the system without clock distribution reconfiguration.
+Claim 8. The system of Claim 7, wherein cross-board timing variance is less than 3
+nanoseconds across boards of differing semiconductor process nodes, device families,
+operating temperatures, and supply voltages, as a consequence of the delay-insensitive
+property of frequency-domain detection.
+Claim 9. A method of eliminating the global clock tree from an inter-module communication
+system comprising: defining a shared frequency vocabulary as the universal protocol for all
+inter-module communication; encoding every inter-module data transfer and every inter-module
+control signal as a frequency-encoded pulse selected from the shared frequency vocabulary;
+detecting inter-module communication events by spectral frequency analysis of incoming
+
+pulses; and triggering module state transitions on frequency detection completion rather than on
+clock edges.
+Claim 10. The method of Claim 9, wherein a designated frequency in the shared vocabulary
+encodes each distinct control event — including pipeline stage advance, chamber alternation,
+integrity seal assertion, and lane switch request — such that data and control signals share a
+common physical interface and a common detection mechanism.
+Claim 11. An integrated self-timed processing system comprising: an oscillator module that
+generates the first frequency-encoded pulse in a pipeline from an internally derived frequency,
+without requiring an external trigger; one or more intermediate processing modules that each
+receive a frequency-encoded pulse, perform a deterministic processing operation, and emit the
+next frequency-encoded pulse encoding the result; and an output module that receives the final
+frequency-encoded pulse and writes the recovered data symbol to a storage medium; wherein
+no global clock is shared among any of the modules, and wherein the pipeline is initiated solely
+by the first frequency pulse emitted by the oscillator module.
+Claim 12. The system of Claim 11, wherein the system is the terminal realization of an
+integrated architecture comprising a frequency oscillator engine, a three-tiered inter-process
+communication engine, and a frequency-domain data transceiver, and wherein all inter-module
+interfaces at all layers of all three components operate exclusively through frequency-encoded
+pulses from a shared MIDI-mapped frequency vocabulary, constituting a unified
+frequency-domain processing system in which every module and every board is natively
+interoperable without translation layers or shared clock distribution.
+
+ABSTRACT
+SPECTRE N0L (No-clock / No Limits) is an asynchronous self-timed inter-module
+communication architecture extending the SPECTRE frequency-domain encoding paradigm
+(SES-003) from the data layer to the system timing and control layer. In SPECTRE N0L,
+frequency-encoded pulses from the MIDI-mapped 128-frequency vocabulary serve
+simultaneously as data carriers, inter-module request signals, and activation triggers,
+eliminating the need for separate handshake wires and eliminating the global clock tree from the
+inter-module communication layer. The receiving module's spectral frequency detection
+completion constitutes an implicit acknowledgment. Modules consume zero dynamic power
+when no frequency pulse is present. Multiple data waves propagate through the pipeline
+simultaneously without register stages. Cross-board timing variance below 3 nanoseconds is
+achieved across all device families as an inherent consequence of Goertzel detection's
+delay-insensitive property, without shared clock distribution. Unlimited board scaling is enabled:
+each board wakes on frequency arrival, processes, emits the next frequency, and returns to
+dark state. When applied to the complete Shimmers · Eidolon · SPECTRE integrated system,
+
+every inter-module interface at every layer operates exclusively through SPECTRE frequency
+pulses — one language, no clocks, no limits.
+
+INVENTOR DECLARATION
+I hereby declare that I am the sole inventor of the subject matter claimed in this provisional
+patent application; that I believe I am the original and first inventor of the invention; that I have
+reviewed and understand the contents of this application; and that I acknowledge my duty to
+disclose information material to patentability.
+The concept of using frequency-encoded pulses simultaneously as data carriers and
+inter-module handshake signals, and the resulting architectural properties (zero-idle power,
+unlimited board scaling, delay-insensitive synchronization, wave pipeline without registers),
+were conceived by me. All artificial intelligence tools used in the development and
+documentation of this invention were used as instruments under my direction. They made no
+independent inventive contribution.
+Inventor: Scott Slater Date: May 4, 2026
+
+This provisional patent application establishes a priority date for the invention described herein.
+It extends the parent provisional SES-003-SPECTRE filed May 4, 2026, and claims priority to
+the parent project SPECTRE priority date of April 25, 2026. A non-provisional patent application
+must be filed within twelve (12) months of the filing date of this provisional pursuant to 35 U.S.C.
+§ 119(e).
+Filed under: SES-004-SPECTRE-N0L | Docket: Shimmers · Eidolon · SPECTRE · N0L | The
+end of the beginning.
+
+

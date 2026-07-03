@@ -183,21 +183,22 @@
   "pages": {
     "about": {
       "meta": {
-        "title": "About — Tailored Web Design & Development",
-        "description": "Custom graphics and innovative designs fashioned to meet your needs with over 57 hand-crafted components crafted to fit every need"
+        "title": "About — Smartscott.com",
+        "description": "Smartscott.com is a Kansas City-based web and software development agency that prioritizes client success and builds modern, performant websites."
       },
       "hero": {
         "badge": "About",
-        "titleLead": "smartscott.com Web Designs —",
-        "typingWords": ["Built For Production-Readiness", "Built For Speed", "Built For SEO", "Built to Compete"],
-        "description": "Astro is a modern, open-source static site generator that empowers developers to build fast, modern websites"
+        "titleLead": "Smartscott.com —",
+        "titleHighlight": "Web Design & Development",
+        "description": "We are a Kansas City-based web and software development agency that prioritizes client success. We design and build modern, performant websites with a focus on user experience and technical excellence.",
+        "typingWords": ["Web Design", "Development", "Performance", "Client Success"]
       },
       "intro": {
-        "badge": "Svelte + Astro",
-        "heading": "A solid foundation for any project",
+        "badge": "About",
+        "heading": "Building with intention",
         "paragraphs": [
-          "Speed and search visibility aren't features to add at the end — they're constraints to honour from the first commit. Every second a page loads costs attention, ranking, and trust.",
-          "Why Developers Use Svelte / *Zero Runtime Overhead: By doing the heavy lifting at build time, Svelte doesn't need to ship an execution library to the browser, leading to smaller bundle sizes and blazing-fast performance. / *Write Less Code: Svelte’s syntax is remarkably concise. Components bundle logic, styling, and markup in a single .svelte file, which helps developers build features faster with fewer lines of code. / *Reactivity: Svelte includes built-in reactive primitives that automatically re-render parts of the UI whenever underlying data or state variables change."
+          "Speed and search visibility are not features to add at the end — they're constraints to honor from the first commit. Every second a page loads costs attention, ranking, and trust.",
+          "Why Developers Use Svelte / *Zero Runtime Overhead: By doing the heavy lifting at build time, Svelte does not need to ship an execution library to the browser, leading to smaller bundle sizes and blazing-fast performance. / *Write Less Code: Svelte’s syntax is remarkably concise. Components bundle logic, styling, and markup in a single .svelte file, which helps developers build features faster with fewer lines of code. / *Reactivity: Svelte includes built-in reactive primitives that automatically re-render parts of the UI whenever underlying data or state variables change."
         ],
         "facts": [
           { "icon": "rocket", "title": "Astro 7", "description": "Built on the latest Astro release." },
@@ -209,13 +210,13 @@
         ]
       },
       "principles": {
-        "badge": "Design Principles",
-        "heading": "Built with intention",
-        "lead": "Every decision — from component structure to default config — is driven by the same three principles.",
+        "badge": "Our Principles",
+        "heading": "Building with intention",
+        "lead": "Every project we undertake is driven by the same three principles: thoughtful design, clean development, and measurable performance.",
         "items": [
-          { "icon": "zap", "title": "Performance First", "description": "Zero JavaScript by default. Every component is optimised for speed, Core Web Vitals, and lean output." },
-          { "icon": "award", "title": "Client Experience", "description": "Easy to maintain, easy to extend, and easy to use." },
-          { "icon": "rocket", "title": "Modern from the Ground Up", "description": "Astro 7, Tailwind CSS 4, Svelte and a clean architecture that competes at every level." }
+          { "icon": "zap", "title": "Performance First", "description": "Fast-loading sites with excellent Core Web Vitals and SEO optimization. We measure success with real metrics, not just vibes." },
+          { "icon": "award", "title": "Client Experience", "description": "Easy to maintain, easy to extend, and easy to use. We believe in building relationships and delivering results that exceed expectations." },
+          { "icon": "rocket", "title": "Modern from the Ground Up", "description": "Built with Astro 7, Tailwind CSS 4, and a clean architecture that competes at every level. We stay current with the latest web technologies." }
         ]
       },
       "stack": {

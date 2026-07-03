@@ -1,0 +1,494 @@
+PROVISIONAL PATENT APPLICATION
+Title: SHIMMERS: High-Frequency Digital Pulse Generation System Using Serializer-Based
+Direct Synthesis, Shared-Root Clock Management, and CRC64-Gated Integrity Delivery
+
+COVER SHEET
+Application Type: Provisional Patent Application (35 U.S.C. § 111(b))
+Title of Invention: High-Frequency Digital Pulse Generation System Using Serializer-Based
+Direct Synthesis with Adaptive Mixed-Mode Clock Management, MIDI-Mapped Bijective
+Frequency Encoding, and CRC64-Integrity-Gated Delivery
+Inventor: Scott Slater
+700 E. 8th St.
+Unit 14E
+Kansas City, MO 64106-5400
+United States Citizen
+Filing Date: May 6, 2026
+Docket / Reference: SES-001-SHIMMERS
+Correspondence Address:
+700 E. 8th St.
+Unit 14E
+Kansas City, MO 64106-5400
+
+FIELD OF THE INVENTION
+This invention relates to digital electronic systems for high-frequency pulse generation and
+frequency synthesis on reconfigurable logic devices (FPGA), and more particularly to a novel
+architecture combining hardware-native output serializers, Mixed-Mode Clock Managers
+(MMCM), phase accumulator-based frequency encoding, sensor-driven adaptive regulation, and
+integrity-sealed delivery to achieve pulse generation rates exceeding 600 MHz with
+deterministic timing, minimal jitter, and dynamic environmental compensation — capabilities that
+
+fundamentally exceed the performance ceiling of prior art Direct Digital Synthesis (DDS)
+systems.
+
+BACKGROUND
+1.1 Limitations of Prior Art Direct Digital Synthesis
+Traditional Direct Digital Synthesis (DDS) systems generate periodic waveforms by
+accumulating a phase increment register and using the resulting phase value to index a lookup
+table (LUT) or Read-Only Memory (ROM) that stores pre-computed amplitude values. This
+approach suffers from several fundamental limitations:
+Phase Truncation Error: As the required output frequency increases, the phase accumulator
+must be truncated to address a finite-size LUT. This truncation introduces spurious spectral
+components that degrade the Spurious-Free Dynamic Range (SFDR), typically limiting
+performance to -70 dBc to -88 dBc.
+ROM Size Scaling: Higher frequency resolution requires exponentially larger lookup tables. A
+32-bit phase accumulator addressing a 512-entry sine LUT wastes 23 address bits, while
+increasing LUT size to match accumulator width is resource-prohibitive.
+Clock Rate Ceiling: Conventional FPGA fabric logic cannot sustain operation at multi-hundred
+MHz rates due to routing congestion, hold time violations, and clock skew across distributed
+logic structures.
+Waveform Reload Latency: When pulse parameters change, ROM-based systems require
+waveform memory to be reloaded, introducing phase discontinuities and transition latency that
+is unacceptable in real-time encoding applications.
+Trigger Uncertainty: ROM-based DDS systems suffer from up to one full clock cycle of trigger
+uncertainty, limiting the precision of frequency-keyed data encoding applications.
+Thermal and Voltage Sensitivity: Fixed-configuration clock synthesizers are susceptible to
+frequency drift under thermal load and supply voltage variation, with no mechanism for real-time
+compensation.
+
+1.2 The OSERDESE3 Clock Skew Problem
+High-speed FPGA output serializer primitives (e.g., OSERDESE3 on UltraScale+) require that
+their high-speed clock (CLK) and their parallel-load divided clock (CLKDIV) arrive within a strict
+maximum skew specification — 0.193 ns at the Fast process corner on UltraScale+ devices.
+
+When CLK and CLKDIV are derived from independent MMCM outputs routed through separate
+clock buffers placed at different physical locations on the device, inter-tree routing skew
+routinely exceeds this specification. No prior art is known that solves this skew problem by
+deriving CLKDIV from the same pre-buffer clock source as CLK, ensuring both signals share an
+identical clock tree root.
+
+1.3 Summary of the Problem
+What is needed is a pulse generation system that: (a) exceeds 600 MHz sustained output rate
+on commercially available FPGA hardware; (b) eliminates ROM-based waveform lookup in favor
+of memoryless serialization; (c) provides instantaneous frequency switching without phase
+discontinuity; (d) compensates in real-time for thermal drift and supply variation; (e) guarantees
+lossless data integrity through cryptographic sealing; (f) operates deterministically with no stalls
+permitted in the pulse path; and (g) is portable across multiple FPGA device families without
+RTL modification. The Shimmers invention addresses all seven requirements.
+
+SUMMARY OF THE INVENTION
+Shimmers is a high-frequency digital pulse generation system implemented as synthesizable
+VHDL targeting reconfigurable hardware (FPGA) that replaces ROM-based waveform synthesis
+with a hardware-native OSERDESE3 output serializer driven by a Mixed-Mode Clock Manager.
+The system encodes arbitrary 7-bit data symbols as frequency-modulated pulse streams using a
+bijective MIDI-mapped lookup table, seals each pulse frame with a CRC64-ECMA-182 integrity
+check, and delivers the sealed stream downstream through a Conductor finite state machine
+that gates delivery on seal validity.
+The central clock innovation is a novel topology in which the serializer's divided clock
+(CLKDIV = 150 MHz) is derived from the pre-buffer high-speed clock signal (clk_fast_unbuf) via
+a BUFGCE_DIV primitive rather than from a separate MMCM output. This ensures CLK and
+CLKDIV share an identical clock tree distribution root, eliminating the inter-tree routing skew that
+causes OSERDESE3 Max Skew violations in prior art implementations. On UltraScale+, this
+reduces worst-case CLK-to-CLKDIV skew from 0.275 ns (violation) to within 0.066 ns
+(compliant), a 76% reduction.
+A second innovation is the bijective MIDI-mapped frequency LUT: a 128-entry synchronous
+ROM mapping each 7-bit input symbol to a unique 32-bit phase increment word. The bijective
+property guarantees that every input symbol maps to a distinct output frequency, making the
+mapping losslessly invertible by a downstream Goertzel-based decoder. The Huffman
+pre-encoder enforces MSB=0 on all output bytes, guaranteeing MIDI note range validity (0–127)
+before the LUT is accessed.
+
+A third innovation is the CRC64-ECMA-182 hard delivery gate: no pulse frame may be
+promoted to a downstream lane unless the CRC64 seal module has asserted seal_intact. This
+is not advisory — it is a combinational interlock in the Conductor FSM RTL.
+A fourth innovation is the Sysmon feedback loop: on-chip junction temperature and core
+supply voltage are continuously measured by the XADC/Sysmon hard IP, converted to physical
+measurements, and fed to an oscillator modifier pipeline enabling real-time frequency
+compensation without system halt or bitstream reload.
+When combined with the Eidolon Dragoncache IPC engine (SES-002) and the SPECTRE
+frequency-domain transceiver (SES-003), Shimmers forms the oscillator and frequency-source
+tier of the Shimmers · Eidolon · SPECTRE (SES) integrated system.
+
+BRIEF DESCRIPTION OF DRAWINGS
+(Informal drawings — formal drawings to accompany non-provisional application)
+Figure 1 — Top-Level System Block Diagram Data flow from input byte through Huffman
+encoder, frequency LUT, phase accumulator, pattern encoder, OSERDESE3 serializer,
+OBUFDS differential output. Clock tree shown separately (Figure 2).
+(Clock detail: see FIG. 2)
+Figure 2 — Clock Domain Architecture IBUFDS differential input → MMCME4_ADV
+(VCO=1200 MHz) → BUFG for clk_fast (600 MHz) and BUFGCE_DIV(÷4) for clk_div (150 MHz)
+sharing same clk_fast_unbuf root → BUFG for clk_100m (100 MHz). BUFGCE_DIV co-location
+with bufg_fast shown. Prior art independent BUFG path shown with skew annotation (0.275 ns >
+0.193 ns limit).
+Figure 3 — Frequency LUT Mapping 128-entry table: 7-bit MIDI note index (0–127) → 32-bit
+phase increment word → target frequency in Hz (8.18 Hz to 12,543.85 Hz). Bijective property
+annotated: each input maps to exactly one output, and each output maps back to exactly one
+input.
+
+Figure 4 — Phase Accumulator and Pattern Encoder Signal Flow 32-bit phase_inc → 32-bit
+accumulator (advances each clk_100m cycle, wraps at 2^32) → 8-bit parallel pattern →
+OSERDESE3 D[7:0] input. Valid gating from huff_encoded_valid shown.
+Figure 5 — OSERDESE3 Configuration Detail DATA_RATE_OQ=DDR, DATA_WIDTH=8,
+CLK=600 MHz, CLKDIV=150 MHz (from BUFGCE_DIV), D[7:0] from pattern encoder, OQ serial
+
+output → OBUFDS → pulse_out_p/n differential pair. I/O standard: DIFF_HSTL_I_12 for 1.2V
+HP bank.
+Figure 6 — CRC64 Seal and Conductor FSM Interaction CRC64 module receives frame
+data, asserts seal_intact. Conductor FSM state: ST_SEAL_WAIT → ST_PROMOTE (only when
+seal_intact='1'). Hard gate shown as combinational AND in FSM transition logic.
+Figure 7 — Sysmon Feedback Loop XADC/Sysmon hard IP → temperature code (T =
+CODE×503.975/4096 − 273.15) and voltage code (V = CODE×3.0/4096) → instruction word →
+oscillator modifier pipeline → phase_inc adjustment. xadc_alert → Conductor FSM lane_switch
+path shown separately.
+
+Figure 8 — Multi-Platform Validation Table Nine device families: Spartan-7 through Versal
+VPK180. WNS, WHS, WPWS all positive. Validation dates May 2026. SHA-256 lossless
+verification column.
+
+DETAILED DESCRIPTION OF THE PREFERRED
+EMBODIMENT
+4.1 System Overview
+The Shimmers pulse generation system operates as the oscillator engine of the larger SES
+frequency-domain data encoding and transmission architecture. It receives input data bytes
+from upstream processing stages, translates each byte to a corresponding frequency via a
+bijective mapping function, generates a high-speed pulse stream encoding that frequency, seals
+each frame with a 64-bit cryptographic integrity check, and delivers the pulse stream to
+downstream consumers via a deterministic, stall-free pipeline.
+The system is implemented in synthesizable VHDL-2008 strict and has been validated on the
+following platforms with zero timing violations:
+Platform
+
+Device
+
+WNS (ns)
+
+Validation Date
+
+Alveo U250
+
+xcu250-figd2104-2Le
+
++0.685
+
+May 4, 2026
+
+Alveo U200
+
+xcu200-fsgd2104-2-e
+
+validated
+
+April 29, 2026
+
+Platform
+
+Device
+
+WNS (ns)
+
+Validation Date
+
+Versal VPK180
+
+xcvp1802-lsvc4072-2
+MP-e-S
+
+validated
+
+April 25, 2026
+
+Virtex VU47P
+
+xcvu47p-fsvh2892-2e
+
++1.254
+
+May 1, 2026
+
+Virtex VU9P
+
+xcvu9p-flgb2104-2-e
+
+validated
+
+May 2, 2026
+
+Kintex-7
+
+xc7k325t
+
+validated
+
+April 29, 2026
+
+Artix-7
+
+xc7a100tcsg324-1
+
+validated
+
+April 29, 2026
+
+Spartan-7
+
+xc7s50csga324-1
+
++11.508
+
+May 2, 2026
+
+Alveo V80
+
+xcv80
+
+PDI validated
+
+April 30, 2026
+
+4.2 Novel Contribution 1 — Shared-Root BUFGCE_DIV Clock Topology
+The Shimmers system derives all operating clocks from a single 300 MHz differential reference
+input using a MMCME4_ADV. The MMCM is configured with CLKFBOUT_MULT_F=4.0,
+DIVCLK_DIVIDE=1, producing VCO=1200 MHz (within the UltraScale+ valid range of 800–1600
+MHz). CLKOUT0_DIVIDE_F=2.0 produces clk_fast_unbuf at 600 MHz. CLKOUT2_DIVIDE=12
+produces clk_100m_unbuf at 100 MHz.
+The critical innovation: The serializer control clock (clk_div = 150 MHz) is NOT derived from
+MMCM CLKOUT1 through an independent BUFG. Instead, it is derived from clk_fast_unbuf (the
+pre-buffer 600 MHz signal) via a BUFGCE_DIV primitive with BUFGCE_DIVIDE=4. This means:
+-​
+-​
+
+clk_fast travels: clk_fast_unbuf → BUFG (bufg_fast) → clk_fast_out
+clk_div travels: clk_fast_unbuf → BUFGCE_DIV(÷4) → clk_div_out
+
+Both paths originate from the identical node (clk_fast_unbuf). The OSERDESE3's CLK and
+CLKDIV inputs see signals that share the same clock tree spine from the same MMCM output,
+guaranteeing sub-nanosecond skew by construction.
+In the prior art implementation (MMCM CLKOUT1 → independent BUFG for CLKDIV), Vivado
+placed bufg_fast at BUFGCE_X0Y98 and bufg_div at BUFGCE_X0Y115 — 17 physical clock
+buffer sites apart. The resulting inter-tree routing skew was 0.275 ns, exceeding the
+OSERDESE3 Max Skew specification of 0.193 ns and producing a -0.082 ns WPWS violation.
+The BUFGCE_DIV topology eliminated this violation entirely, with WPWS improving from -0.082
+ns to +0.066 ns.
+
+4.3 Novel Contribution 2 — Bijective MIDI-Mapped Frequency LUT
+The frequency_lut module implements a 128-entry synchronous ROM mapping each 7-bit input
+symbol (MIDI note 0–127) to a 32-bit phase increment word. The phase increment encodes
+target frequency F as:
+phase_inc = F × 2^32 / F_clock
+where F_clock = 100 MHz. The mapping is strictly bijective: each of the 128 MIDI note
+frequencies (8.176 Hz to 12,543.85 Hz, equal-temperament spacing) maps to exactly one
+phase increment value, and each phase increment maps to exactly one MIDI note. This
+invertibility is the prerequisite for lossless data recovery by the downstream Goertzel decoder.
+The lookup is single-cycle latency: phase_inc_out is valid one clock cycle after byte_in is
+presented. Throughput is one lookup per 100 MHz cycle, giving a maximum symbol rate of 100
+million symbols per second — well above the 96 kHz Goertzel window rate required by
+SPECTRE.
+
+4.4 Novel Contribution 3 — Huffman Pre-Encoder with MSB=0 Invariant
+The huff_encoder module implements a static-ROM Huffman entropy encoder that processes
+input bytes from the UART intake FIFO prior to frequency lookup. The encoder indexes a
+256-entry code table by input byte value, accumulates variable-length output codes in a 16-bit
+shift register, and emits complete 8-bit output bytes as the accumulator fills.
+The MSB=0 invariant: The encoder enforces that the most significant bit of every output byte is
+zero. This guarantees that the output byte value is in the range 0x00–0x7F — a valid MIDI note
+index — before it reaches the frequency_lut. Without this invariant, input bytes with values
+0x80–0xFF would produce out-of-range LUT indices. The huff_encoder eliminates this failure
+mode structurally.
+The huff_encoded_valid signal directly gates phase_inc_valid in the
+frequency_pattern_encoder, ensuring the phase accumulator advances only when a valid
+encoded byte is available. This maintains cycle-accurate synchronization between entropy
+encoding and frequency encoding.
+
+4.5 Novel Contribution 4 — Phase Accumulator and Pattern Encoder
+The frequency_pattern_encoder receives the 32-bit phase increment word and implements a
+digital phase accumulator advancing by phase_inc each 100 MHz clock cycle, wrapping at
+2^32. The instantaneous 32-bit phase value is mapped to an 8-bit parallel output pattern
+representing one OSERDESE3 serialization unit — 8 consecutive output bits.
+
+The 8-bit pattern is presented to OSERDESE3 D[7:0] each clk_div (150 MHz) cycle. Because
+OSERDESE3 serializes 8 bits per clk_div cycle at 4× the clk_div rate (DDR on 600 MHz CLK),
+the effective output bit rate is 8 × 150 MHz = 1,200 Mbps, corresponding to 600 MHz effective
+pulse transitions.
+The encoder is gated by a foresight_gate signal from the downstream Dragoncache hub,
+ensuring pulses are only emitted when all downstream components have confirmed readiness
+— implementing the component foresight protocol of the SES system.
+
+4.6 Novel Contribution 5 — OSERDESE3 8:1 DDR Serializer Configuration
+The triton_pulse_heart module instantiates an OSERDESE3 primitive with the following
+configuration:
+-​
+-​
+-​
+-​
+-​
+-​
+
+DATA_RATE_OQ: DDR — both rising and falling edges of CLK are used for serialization
+DATA_WIDTH: 8 — 8 parallel input bits serialized per CLKDIV cycle
+CLK: clk_fast (600 MHz) — from BUFG(clk_fast_unbuf)
+CLKDIV: clk_div (150 MHz) — from BUFGCE_DIV(clk_fast_unbuf ÷ 4)
+D[7:0]: 8-bit parallel pattern from frequency_pattern_encoder
+OQ: 1-bit serial output to OBUFDS
+
+A 3-stage flip-flop synchronizer in the clk_div domain safely crosses the active-low reset signal
+from the clk_100m domain, preventing metastability at the OSERDESE3 RST input. The
+OBUFDS drives pulse_out_p and pulse_out_n with DIFF_HSTL_I_12 I/O standard, appropriate
+for UltraScale+ High-Performance I/O banks operating at 1.2V VCCO (Bank 64 on Alveo U250).
+
+4.7 Novel Contribution 6 — CRC64-ECMA-182 Hard Delivery Gate
+The crc64_seal module computes a 64-bit CRC over each pulse frame using the
+CRC64-ECMA-182 polynomial (0x42F0E1EBA9EA3693). The seal_intact signal asserted by the
+module is a combinational prerequisite in the Conductor FSM for lane promotion. The FSM
+transition from ST_SEAL_WAIT to ST_PROMOTE has the condition:
+next_state <= ST_PROMOTE when seal_intact = '1' else ST_SEAL_WAIT;
+There is no timeout, bypass, or software override. CRC32 (collision probability ~1:4 billion) is
+architecturally rejected: in a frequency-domain encoding system generating millions of frames
+per second, CRC32 collision probability over a multi-hour run is statistically non-negligible.
+CRC64-ECMA-182 (collision probability ~1:18 quintillion) is the minimum acceptable integrity
+mechanism.
+
+4.8 Novel Contribution 7 — Conductor FSM Lane Arbitration
+The conductor_fsm module is the central control plane of the Shimmers oscillator engine. It
+orchestrates: sync_pulse issuance to gate phase accumulator advancement; chamber_select
+control for dual-chamber URAM alternation; crc_valid monitoring for integrity gate enforcement;
+spoke_ready gating for lane promotion; chamber_switch issuance for stack_reader drain
+triggering; and crc_msg_end/crc_start for frame boundary delineation.
+The FSM ensures all pulse delivery is deterministic: no stalls are permitted in the path from
+phase accumulator to pulse output. All clock domain crossings use two-stage flip-flop
+synchronizers. The xadc_alert input from the Sysmon loop enables autonomous lane switching
+in response to thermal or voltage anomalies without system halt.
+
+4.9 Novel Contribution 8 — Sysmon Real-Time Frequency Compensation
+Loop
+The xadc_monitor module wraps the XADC (7-series) or Sysmon (UltraScale+) hard IP block to
+continuously measure on-chip junction temperature and core supply voltage:
+T (°C) = (ADC_CODE × 503.975 / 4096) − 273.15
+V (V) = ADC_CODE × 3.0 / 4096
+These measurements are converted to instruction words that feed an oscillator modifier
+pipeline, enabling real-time compensation of frequency drift caused by thermal load or supply
+voltage variation. No system halt, no bitstream reload, no host CPU intervention. The xadc_alert
+signal is additionally presented to the Conductor FSM to enable autonomous lane switching if
+anomalies exceed configured thresholds. Sysmon is a telemetry-and-compensation loop, not a
+shutdown handler.
+
+4.10 Integration as Part of the SES Compiled Architecture
+When Shimmers operates as part of the Shimmers · Eidolon · SPECTRE (SES) integrated
+system:
+-​
+
+Shimmers feeds Eidolon: The OSERDESE3 pulse output stream is the data source for
+Eidolon's Inception tier. Each frequency-encoded pulse frame is handed off via the
+Dragoncache hub interface after CRC64 seal assertion by the Conductor FSM.
+
+-​
+
+Shimmers shares the frequency vocabulary with SPECTRE: The MIDI-mapped
+bijective LUT in Shimmers is the same 128-frequency vocabulary that SPECTRE's
+Goertzel decoder uses for data recovery. The two components are designed around the
+same frequency alphabet, making the end-to-end system a coherent lossless pipeline.
+
+-​
+
+Emergent system property: In the SES system, the Shimmers oscillator generates the
+primary frequency events that drive the entire pipeline. The component foresight protocol
+(Eidolon pre-broadcasting pulse frames before delivery) means SPECTRE's Goertzel
+window begins accumulating samples from Shimmers before the formal delivery event
+— absorbing window-fill latency into the broadcast phase.
+
+CLAIMS
+(Informal claims for provisional filing — formal claims to be developed with patent attorney for
+non-provisional application)
+Claim 1. A digital pulse generation system comprising: a Mixed-Mode Clock Manager
+generating a first clock signal at a first frequency from a differential reference input; a clock
+divider primitive driven from a pre-buffer version of the first clock signal and generating a second
+clock signal at a second frequency equal to the first frequency divided by an integer factor,
+wherein the first and second clock signals share an identical clock tree distribution root; an
+output serializer primitive having a first clock input connected to the first clock signal and a
+second clock input connected to the second clock signal; a phase accumulator advancing by a
+programmable phase increment each cycle of a fabric clock; a pattern encoder translating
+phase accumulator values to parallel data patterns; and a differential output buffer converting
+the serialized output of the serializer primitive to a differential pulse stream.
+Claim 2. The system of Claim 1, wherein the clock divider primitive is a BUFGCE_DIV with a
+divide factor of 4, and wherein the first frequency is approximately 600 MHz and the second
+frequency is approximately 150 MHz, and wherein the Mixed-Mode Clock Manager VCO
+frequency is 1,200 MHz within the device-specified valid VCO range.
+Claim 3. The system of Claim 1, further comprising a frequency lookup table implementing a
+bijective mapping from a 7-bit input index to a 32-bit phase increment word encoding a target
+frequency as a fraction of the fabric clock frequency, wherein the 7-bit input index corresponds
+to a MIDI note value in the range 0–127.
+Claim 4. The system of Claim 3, wherein distinct input values map to distinct output frequencies
+across the full 128-entry input range, enabling lossless recovery of the original input symbol by
+a downstream frequency detector.
+Claim 5. The system of Claim 1, further comprising a Huffman entropy encoder processing input
+bytes prior to frequency lookup, wherein the encoder enforces a most-significant-bit-zero
+invariant on all output bytes, guaranteeing that all output values are valid frequency table
+indices.
+
+Claim 6. The system of Claim 1, further comprising a CRC64-ECMA-182 integrity seal module
+computing a 64-bit cyclic redundancy check over each pulse frame, wherein delivery of said
+pulse frame to a downstream consumer is conditioned on assertion of a seal_intact signal from
+the CRC module, with no bypass or timeout.
+Claim 7. The system of Claim 6, wherein a Conductor finite state machine arbitrates lane
+promotion, chamber switching, and sync pulse issuance, and wherein the transition from a
+seal-wait state to a promote state is conditioned solely on the seal_intact signal, with no
+software override.
+Claim 8. The system of Claim 1, further comprising a sensor monitoring subsystem continuously
+measuring on-chip junction temperature and core supply voltage and generating compensation
+signals to regulate oscillator frequency in real-time response to detected anomalies, without
+system halt or bitstream reload.
+Claim 9. The system of Claim 1, implemented on a Field-Programmable Gate Array device and
+achieving sustained pulse output at or above 600 million pulses per second with static timing
+analysis confirming positive worst-case setup slack (WNS > 0), positive worst-case hold slack
+(WHS > 0), and positive worst-case pulse width slack (WPWS > 0) simultaneously.
+Claim 10. A method of generating high-frequency digital pulses comprising: generating a
+high-speed clock and a divided clock from the same pre-buffer clock source to guarantee
+identical distribution path to a serializer primitive; mapping an input data symbol to a phase
+increment word via a bijective lookup table indexed by MIDI note values 0–127; advancing a
+phase accumulator by the phase increment word each fabric clock cycle; encoding the
+instantaneous phase value as an 8-bit parallel pattern; serializing the pattern via a hardware
+output serializer at the high-speed clock rate to produce a pulse stream at or above 600 MHz;
+computing a 64-bit CRC over the pulse frame; and conditioning delivery of the pulse frame on
+successful CRC64 verification.
+Claim 11. The method of Claim 10, further comprising monitoring on-chip temperature and
+voltage and dynamically adjusting oscillator frequency to compensate for environmental
+variation without system halt or bitstream reload.
+Claim 12. The method of Claim 10, further comprising entropy-encoding input bytes prior to
+frequency lookup using a Huffman encoder that enforces a most-significant-bit-zero constraint
+on all output codes, guaranteeing frequency table index validity before lookup.
+
+ABSTRACT
+Shimmers is a high-frequency digital pulse generation system that overcomes the fundamental
+limitations of prior art Direct Digital Synthesis by replacing ROM-based waveform lookup with a
+hardware-native OSERDESE3 output serializer driven by a Mixed-Mode Clock Manager. A
+novel clock generation topology derives the serializer's divided control clock (CLKDIV) from the
+identical pre-buffer source as the high-speed clock (CLK) via a BUFGCE_DIV primitive,
+ensuring both signals share an identical clock tree root and eliminating the inter-tree routing
+skew that causes OSERDESE3 Max Skew violations in prior art implementations. Input data
+bytes are Huffman-encoded with a forced MSB=0 invariant guaranteeing MIDI note validity, then
+mapped to frequencies via a bijective 128-entry lookup table and a 32-bit phase accumulator,
+encoded as 8-bit parallel patterns, serialized at the full 600 MHz clock rate, and delivered as a
+differential pulse stream. CRC64-ECMA-182 integrity sealing is enforced as a hard prerequisite
+for pulse frame delivery by the Conductor FSM. A sensor monitoring loop provides real-time
+thermal and voltage compensation without system interrupt. The system is implemented in
+VHDL-2008 and has been validated with zero timing violations across nine distinct FPGA device
+families including Spartan-7 through Versal VPK180 and AMD Alveo datacenter accelerator
+cards.
+
+INVENTOR DECLARATION
+I hereby declare that I am the sole inventor of the subject matter claimed in this provisional
+patent application; that I believe I am the original and first inventor of the invention; that I have
+reviewed and understand the contents of this application; and that I acknowledge my duty to
+disclose information material to patentability.
+All artificial intelligence tools used during the development and documentation of this invention
+were used as instruments under my direction. They made no independent inventive
+contribution. The inventive concept, architectural decisions, performance criteria, validation
+methodology, and reduction to practice were conceived and directed solely by me.
+Inventor: Scott Slater Date: May 4, 2026
+
+This provisional patent application establishes a priority date for the invention described herein.
+A non-provisional patent application claiming the benefit of this provisional must be filed within
+twelve (12) months of the filing date of this provisional pursuant to 35 U.S.C. § 119(e).
+
+Filed under: SES-001-SHIMMERS | Docket: Shimmers · Eidolon · SPECTRE System | Priority:
+April 25, 2026 (parent project SPECTRE)
+
+
