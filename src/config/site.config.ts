@@ -5,6 +5,7 @@ export { i18nConfig };
 export type { I18nConfig };
 
 export interface SiteConfig {
+  imageUrl: "favicon.png";
   name: string;
   description: string;
   url: string;
@@ -38,7 +39,7 @@ export interface SiteConfig {
     bing?: string;
   };
   /** Path to author photo (relative to site root, e.g. '/avatar.jpg'). Used in Person schema. */
-  authorImage?: string;
+  authorImage?: '/src/assets/blog/me.png';
   /**
    * Set to false if your blog post images already match your theme color
    * and you don't want the brand color overlay applied on top of them.
@@ -213,7 +214,7 @@ export interface SiteConfig {
   branding: {
     /** Logo alt text for accessibility */
     logo: {
-      alt: string;
+      alt: 'smartscott';
       /**
        * Optional path to a custom logo image in public/ (e.g. '/logo.svg').
        * When set, it replaces the generated letter-monogram badge in the
@@ -221,13 +222,13 @@ export interface SiteConfig {
        * needed. Leave unset to keep the monogram. Per-author byline avatars
        * (which pass an explicit letter) are unaffected.
        */
-      image?: string;
+      image?: '/logo.png';
       /** Path to logo image for structured data (e.g. '/logo.png'). Add a PNG to public/ and set this. */
-      imageUrl?: string;
+      imageUrl?: '/favicon.png';
     };
     /** Favicon path (lives in public/) */
     favicon: {
-      png: string;
+      png: 'favicon.png';
     };
     /** Theme colors for manifest and browser UI */
     colors: {
@@ -244,6 +245,7 @@ const siteConfig: SiteConfig = {
   description:
     'Web Design and Software Development tailored to fit your desire and provide technical solutions for AI integrations and more.',
   url: SITE_URL || 'https://smartscott.com',
+  imageUrl: 'favicon.png',
   ogImage: '/og-default.png',
   author: 'Scott Slater',
   email: 'discover@smartscott.info',
@@ -270,7 +272,7 @@ const siteConfig: SiteConfig = {
     google: GOOGLE_SITE_VERIFICATION,
     bing: BING_SITE_VERIFICATION,
   },
-  authorImage: '/avatar.png',
+  authorImage: '/src/assets/blog/me.png',
   blogImageOverlay: true,
   effects: {
     cursorTrail: true,
@@ -338,12 +340,12 @@ const siteConfig: SiteConfig = {
   i18n: i18nConfig,
   branding: {
     logo: {
-      alt: 'Astro Rocket',
+      alt: 'smartscott',
       // image: '/logo.svg', // Optional: set to a file in public/ to use a custom logo image instead of the letter monogram.
       imageUrl: '/favicon.png',
     },
     favicon: {
-      svg: '/favicon.png',
+      png: 'favicon.png',
     },
     colors: {
       themeColor: '#D4AF37',
