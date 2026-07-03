@@ -244,7 +244,7 @@ const siteConfig: SiteConfig = {
   description:
     'Web Design and Software Development tailored to fit your desire and provide technical solutions for AI integrations and more.',
   url: SITE_URL || 'https://smartscott.com',
-  ogImage: '/og-default.svg',
+  ogImage: '/og-default.png',
   author: 'Scott SLater',
   email: 'discover@smartscott.info',
   address: {
@@ -270,7 +270,7 @@ const siteConfig: SiteConfig = {
     google: GOOGLE_SITE_VERIFICATION,
     bing: BING_SITE_VERIFICATION,
   },
-  authorImage: '/avatar.svg',
+  authorImage: '/avatar.png',
   blogImageOverlay: true,
   effects: {
     cursorTrail: true,
@@ -340,10 +340,10 @@ const siteConfig: SiteConfig = {
     logo: {
       alt: 'Astro Rocket',
       // image: '/logo.svg', // Optional: set to a file in public/ to use a custom logo image instead of the letter monogram.
-      imageUrl: '/favicon.svg',
+      imageUrl: '/favicon.png',
     },
     favicon: {
-      svg: '/favicon.svg',
+      svg: '/favicon.png',
     },
     colors: {
       themeColor: '#D4AF37',
