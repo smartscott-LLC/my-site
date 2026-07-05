@@ -19,11 +19,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/hansmartensdev/astro-rocket"
+    "url": "https://github.com/smartscott-LLC"
   },
-  "homepage": "https://github.com/hansmartensdev/astro-rocket#readme",
+  "homepage": "https://github.com/smartscott-LLC",
   "bugs": {
-    "url": "https://github.com/hansmartensdev/astro-rocket/issues"
+    "url": "https://github.com/smartscott-LLC"
   },
   "scripts": {
     "dev": "astro dev",
